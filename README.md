@@ -1,5 +1,5 @@
 # Cyber Kill Chain – Operation: PWN EVERYTHING
-*Presented by: Agent 1337, InfoSec's slickest field operative*
+*Presented by: Agent 1337 aka Ainny1, InfoSec's slickest field operative*
 
 _Includes working payload code samples for lab use._
 
