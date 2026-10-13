@@ -1,43 +1,39 @@
-# SOC Investigation Playbook — Kill Chain Signals
+# SOC Investigation Playbook — Real, Reproducible Local Evidence
 
-## Objective
+## What is real here?
 
-Investigate an unusual outbound connection alert in an **authorized lab** without assuming malicious intent. This is a reproducible **exercise design**, not a report of a completed investigation.
+This repository includes an **executable loopback telemetry exercise**. Running it starts a temporary HTTP service on your own machine, sends benign requests to it, captures **actual server-observed events**, and writes a timestamped Markdown evidence report. The evidence is real for **that local run**, but it is **not** proof of malware, command-and-control, an EDR alert, or a functioning SIEM.
 
-## Data to collect
+## Run the exercise
 
-- Endpoint: host identifier, process path, parent process, process start time, and signed-binary status (if available).
-- Network: destination, port, DNS name, connection frequency, and time window.
-- Context: asset owner, expected software, known maintenance activity, and relevant change tickets.
-- Security tools: EDR alerts, DNS/proxy/firewall logs, and asset inventory where configured.
+Requirements: Python 3.9+; no third-party packages or cloud account.
 
-## Triage procedure
+```bash
+python3 scripts/local_telemetry_lab.py --count 5 --interval 0.25
+```
 
-1. Record the alert's UTC timestamp and originating data source.
-2. Confirm the event is present in raw telemetry; note missing fields.
-3. Identify the originating process and whether the destination is expected.
-4. Compare connection intervals with normal activity; regular timing alone does **not** prove command-and-control.
-5. Review related endpoint and identity events in the same time window.
-6. Classify as expected, suspicious, or inconclusive, documenting evidence and uncertainty.
-7. If suspicious, follow the organization's approved escalation and containment process. Do not perform disruptive actions in production as part of this exercise.
+On Windows, use `py -3` in place of `python3` if needed.
 
-## Safe validation option
+Open **`lab-output/evidence.md`** to see the *actual UTC run time*, number of requests expected and observed, response status, and PASS/REVIEW outcome. Raw events are in **`lab-output/events.jsonl`**. Both are ignored by Git by default so evidence from one machine isn't mistaken for universal results.
 
-Generate benign periodic requests from an owned lab VM to a **local service you control**; do not simulate remote malware or stealth behavior. Record whether your own logging captures the connections, then compare expected and observed events.
+### Architecture
 
-## Evidence template
+```mermaid
+flowchart LR
+  A["Local Python HTTP client"] -->|"5 benign GETs"| B["127.0.0.1 temporary HTTP server"]
+  B --> C["Observed JSONL access events"]
+  C --> D["Generated evidence.md"]
+  D --> E["Analyst compares expected vs actual"]
+```
 
-| Field | Finding |
-| --- | --- |
-| Lab date and scope | Not yet recorded |
-| Hypothesis | Repeated outbound connections merit contextual review |
-| Telemetry source | Not yet configured / verified |
-| Expected events | Not yet recorded |
-| Observed events | Not tested |
-| False positives | Software update checks, monitoring agents, scheduled jobs |
-| Outcome | Not determined |
-| Next action | Collect and review authorized lab evidence |
+## Analyst workflow
 
-## Limitations
+1. Check that `lab-output/events.jsonl` contains one JSON record per observed request.
+2. Compare the expected count against the observed count in `lab-output/evidence.md`.
+3. Inspect the UTC timestamps and status codes; note that a regular interval **does not imply malicious activity**.
+4. Record the environment, Python version, and any unexpected behavior in your case study.
+5. For a future SIEM exercise, explicitly configure log forwarding and independently validate ingestion and alerting before claiming those capabilities.
 
-Network indicators are context-dependent. ATT&CK tactic mappings are illustrative and do not prove attribution, intrusion, or impact. Never publish personal data, internal hostnames, credentials, or unredacted logs.
+## Limitations and privacy
+
+The service binds only to `127.0.0.1` on a temporary port and stops automatically. It does not contact third-party systems. The output proves the local script recorded requests during execution; it does not establish external network telemetry, persistence, intrusion, or MITRE ATT&CK technique detection. Review logs before sharing.
