@@ -32,9 +32,9 @@ flowchart LR
 
 Run the **real local loopback telemetry exercise** with `python3 scripts/local_telemetry_lab.py`. It writes observed events and a timestamped evidence report on your machine. See the [SOC investigation playbook](docs/soc-investigation-playbook.md) for steps and limitations.
 
-## 📌 Portfolio status
+## ✅ Observed Windows lab results\n\nThe project owner completed the local HTTP telemetry exercise on Windows and supplied a screenshot of the generated report showing **5 expected requests, 5 observed server events, 5 HTTP 200 responses, and PASS**. This validates local request logging only, not SIEM/EDR detection. Read the [observed-results case study](docs/windows-local-telemetry-case-study.md).\n\n## 📌 Portfolio status
 
 - **Documented:** Kill Chain stages, example defensive telemetry, investigation workflow, and response ideas.
-- **Not yet demonstrated:** Live telemetry ingestion, operational alerts, detection accuracy, and incident-response outcomes.
+- **Not yet demonstrated:** SIEM/EDR ingestion, operational alerts, detection accuracy, and incident-response outcomes. Local loopback request logging has been demonstrated.
 
 This repository deliberately focuses on **defensive understanding** rather than executable payloads, credential theft, persistence, or data exfiltration. Never test third-party systems without explicit authorization.
