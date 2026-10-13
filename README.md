@@ -30,7 +30,7 @@ flowchart LR
 
 ## 🧪 Safe lab validation
 
-Practice with **synthetic data or benign actions on systems you own**. See the [SOC investigation playbook](docs/soc-investigation-playbook.md) for a sample alert-triage workflow, evidence template, and detection limitations.
+Run the **real local loopback telemetry exercise** with `python3 scripts/local_telemetry_lab.py`. It writes observed events and a timestamped evidence report on your machine. See the [SOC investigation playbook](docs/soc-investigation-playbook.md) for steps and limitations.
 
 ## 📌 Portfolio status
 
